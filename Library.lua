@@ -2501,8 +2501,6 @@ do
         function Dropdown:OnChanged(Func)
             Dropdown.Changed = Func;
             Func(Dropdown.Value);
-            print('update dep boxes')
-            Library:UpdateDependencyBoxes()
         end;
 
         function Dropdown:SetValue(Val)
@@ -2670,8 +2668,6 @@ do
 
         table.insert(Library.DependencyBoxes, Depbox);
 
-        Library:UpdateDependencyBoxes()
-        print('yo')
         return Depbox;
     end;
 

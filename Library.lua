@@ -2670,6 +2670,8 @@ do
 
         table.insert(Library.DependencyBoxes, Depbox);
 
+        Library:UpdateDependencyBoxes()
+        print('yo')
         return Depbox;
     end;
 

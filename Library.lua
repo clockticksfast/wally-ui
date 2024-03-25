@@ -2500,8 +2500,9 @@ do
 
         function Dropdown:OnChanged(Func)
             Dropdown.Changed = Func;
-            Library:UpdateDependencyBoxes();
             Func(Dropdown.Value);
+            print('update dep boxes')
+            Library:UpdateDependencyBoxes()
         end;
 
         function Dropdown:SetValue(Val)

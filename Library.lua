@@ -2642,12 +2642,13 @@ do
                 local Value = Dependency[2];
 
                 if Elem.Value ~= Value then
+                    print('set hidden')
                     Holder.Visible = false;
                     Depbox:Resize();
                     return;
                 end;
             end;
-
+            print('set visible')
             Holder.Visible = true;
             Depbox:Resize();
         end;

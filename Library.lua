@@ -2500,6 +2500,7 @@ do
 
         function Dropdown:OnChanged(Func)
             Dropdown.Changed = Func;
+            Library:UpdateDependencyBoxes();
             Func(Dropdown.Value);
         end;
 
@@ -2589,7 +2590,6 @@ do
 
         Groupbox:AddBlank(Info.BlankSize or 5);
         Groupbox:Resize();
-        Library:UpdateDependencyBoxes()
 
         Options[Idx] = Dropdown;
         

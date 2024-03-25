@@ -2589,9 +2589,10 @@ do
 
         Groupbox:AddBlank(Info.BlankSize or 5);
         Groupbox:Resize();
+        Library:UpdateDependencyBoxes()
 
         Options[Idx] = Dropdown;
-
+        
         return Dropdown;
     end;
 
@@ -2642,13 +2643,11 @@ do
                 local Value = Dependency[2];
 
                 if Elem.Value ~= Value then
-                    print('set hidden')
                     Holder.Visible = false;
                     Depbox:Resize();
                     return;
                 end;
             end;
-            print('set visible')
             Holder.Visible = true;
             Depbox:Resize();
         end;

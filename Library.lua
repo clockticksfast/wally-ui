@@ -1014,7 +1014,6 @@ do
             Type = 'KeyPicker';
             Callback = Info.Callback or function(Value) end;
             ChangedCallback = Info.ChangedCallback or function(New) end;
-
             SyncToggleState = Info.SyncToggleState or false;
         };
 
@@ -1053,15 +1052,23 @@ do
             ZIndex = 8;
             Parent = PickInner;
         });
+        local Modes = Info.Modes or { 'Always', 'Toggle', 'Hold' };
 
+
+        local numModes = #Modes
+        local modeHeight = 15  -- Each mode button's height
+        local padding = 2      -- Padding between mode buttons
+        local totalHeight = (numModes * modeHeight) + ((numModes - 1) * padding)
+    
         local ModeSelectOuter = Library:Create('Frame', {
             BorderColor3 = Color3.new(0, 0, 0);
             Position = UDim2.fromOffset(ToggleLabel.AbsolutePosition.X + ToggleLabel.AbsoluteSize.X + 4, ToggleLabel.AbsolutePosition.Y + 1);
-            Size = UDim2.new(0, 60, 0, 45 + 2);
-            Visible = false;
+            Size = UDim2.new(0, 60, 0, totalHeight + 2);  -- Adjust based on total height
+            Visible = numModes > 1;  -- Show if there are multiple modes
             ZIndex = 14;
             Parent = ScreenGui;
         });
+    
 
         ToggleLabel:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
             ModeSelectOuter.Position = UDim2.fromOffset(ToggleLabel.AbsolutePosition.X + ToggleLabel.AbsoluteSize.X + 4, ToggleLabel.AbsolutePosition.Y + 1);
@@ -1096,7 +1103,6 @@ do
             Parent = Library.KeybindContainer;
         },  true);
 
-        local Modes = Info.Modes or { 'Always', 'Toggle', 'Hold' };
         local ModeButtons = {};
 
         for Idx, Mode in next, Modes do

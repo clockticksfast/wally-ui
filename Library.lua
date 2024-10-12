@@ -3558,7 +3558,10 @@ function Library:CreateWindow(...)
             end;
         end;
 
-        task.wait(FadeTime);
+        if not Toggled then
+            task.wait(FadeTime);
+
+        end
 
         Outer.Visible = Toggled;
 
@@ -3596,4 +3599,3 @@ Players.PlayerAdded:Connect(OnPlayerChange);
 Players.PlayerRemoving:Connect(OnPlayerChange);
 
 getgenv().Library = Library
-return Library

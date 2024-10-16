@@ -1056,8 +1056,8 @@ do
 
 
         local numModes = #Modes
-        local modeHeight = 15  -- Each mode button's height
-        local padding = 2      -- Padding between mode buttons
+        local modeHeight = 15
+        local padding = 2
         local totalHeight = (numModes * modeHeight) + ((numModes - 1) * padding)
     
         local ModeSelectOuter = Library:Create('Frame', {
@@ -1180,26 +1180,38 @@ do
             Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 23)
         end;
 
+        local keyStates = {}
+        Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
+            if not GameProcessed and Input.UserInputType == Enum.UserInputType.Keyboard then
+                local key = Input.KeyCode.Name
+                keyStates[key] = true  -- Mark the key as released
+            end
+        end))
+        Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
+            if not GameProcessed and Input.UserInputType == Enum.UserInputType.Keyboard then
+                local key = Input.KeyCode.Name
+                keyStates[key] = false  -- Mark the key as released
+            end
+        end))
+
+        -- KeyPicker:GetState function to use the tracked key states
         function KeyPicker:GetState()
             if KeyPicker.Mode == 'Always' then
-                return true;
+                return true
             elseif KeyPicker.Mode == 'Hold' then
                 if KeyPicker.Value == 'None' then
-                    return false;
+                    return false
                 end
 
-                local Key = KeyPicker.Value;
+                -- Get the key from the KeyPicker value
+                local key = KeyPicker.Value
 
-                if Key == 'MB1' or Key == 'MB2' then
-                    return Key == 'MB1' and InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-                        or Key == 'MB2' and InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2);
-                else
-                    return InputService:IsKeyDown(Enum.KeyCode[KeyPicker.Value]);
-                end;
+                -- Return whether the key is pressed using the tracked state
+                return keyStates[key] or false
             else
-                return KeyPicker.Toggled;
-            end;
-        end;
+                return KeyPicker.Toggled
+            end
+        end
 
         function KeyPicker:SetValue(Data)
             local Key, Mode = Data[1], Data[2];
@@ -1287,7 +1299,7 @@ do
             end;
         end);
 
-        Library:GiveSignal(InputService.InputBegan:Connect(function(Input)
+        Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
             if (not Picking) then
                 if KeyPicker.Mode == 'Toggle' then
                     local Key = KeyPicker.Value;
@@ -1298,7 +1310,7 @@ do
                             KeyPicker.Toggled = not KeyPicker.Toggled
                             KeyPicker:DoClick()
                         end;
-                    elseif Input.UserInputType == Enum.UserInputType.Keyboard then
+                    elseif Input.UserInputType == Enum.UserInputType.Keyboard and not GameProcessed then
                         if Input.KeyCode.Name == Key then
                             KeyPicker.Toggled = not KeyPicker.Toggled;
                             KeyPicker:DoClick()

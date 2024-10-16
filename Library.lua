@@ -1015,6 +1015,7 @@ do
             Callback = Info.Callback or function(Value) end;
             ChangedCallback = Info.ChangedCallback or function(New) end;
             SyncToggleState = Info.SyncToggleState or false;
+            ParentBlock = Info.ParentBlock or false;
         };
 
         if KeyPicker.SyncToggleState then
@@ -1052,9 +1053,9 @@ do
             ZIndex = 8;
             Parent = PickInner;
         });
-        local Modes = Info.Modes or { 'Always', 'Toggle', 'Hold' };
+        local Modes = Info.Modes or {KeyPicker.Mode};
 
-
+        
         local numModes = #Modes
         local modeHeight = 15
         local padding = 2
@@ -1103,6 +1104,69 @@ do
             Parent = Library.KeybindContainer;
         },  true);
 
+        local Picking = false;
+        local KeyStates = {}
+        Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
+            if Input.UserInputType == Enum.UserInputType.Keyboard and not GameProcessed then
+                local key = Input.KeyCode.Name
+                KeyStates[key] = true
+                KeyPicker:Update()
+            end
+        end))
+        Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
+            if Input.UserInputType == Enum.UserInputType.Keyboard then
+                local key = Input.KeyCode.Name
+                KeyStates[key] = false
+                KeyPicker:Update()
+            end
+        end))
+        function KeyPicker:GetState()
+            if not ParentObj.Value then
+                return false
+            end
+            if Picking then
+                return false
+            end
+            if KeyPicker.Mode == 'Always' then
+                return true
+            elseif KeyPicker.Mode == 'Hold' then
+                if KeyPicker.Value == 'None' then
+                    return false
+                end
+                return KeyStates[KeyPicker.Value] or false
+            else
+                return KeyPicker.Toggled
+            end
+        end
+        function KeyPicker:Update()
+            if Info.NoUI then
+                return;
+            end;
+
+            local State = KeyPicker:GetState();
+
+
+            ContainerLabel.Text = string.format('[%s] %s (%s)', KeyPicker.Value, Info.Text, KeyPicker.Mode);
+
+            ContainerLabel.Visible = true;
+            ContainerLabel.TextColor3 = State and Library.AccentColor or Library.FontColor;
+
+            Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
+
+            local YSize = 0
+            local XSize = 0
+
+            for _, Label in next, Library.KeybindContainer:GetChildren() do
+                if Label:IsA('TextLabel') and Label.Visible then
+                    YSize = YSize + 18;
+                    if (Label.TextBounds.X > XSize) then
+                        XSize = Label.TextBounds.X
+                    end
+                end;
+            end;
+
+            Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 23)
+        end;
         local ModeButtons = {};
 
         for Idx, Mode in next, Modes do
@@ -1128,6 +1192,8 @@ do
                 Library.RegistryMap[Label].Properties.TextColor3 = 'AccentColor';
 
                 ModeSelectOuter.Visible = false;
+                KeyPicker:Update()
+
             end;
 
             function ModeButton:Deselect()
@@ -1151,67 +1217,7 @@ do
             ModeButtons[Mode] = ModeButton;
         end;
 
-        function KeyPicker:Update()
-            if Info.NoUI then
-                return;
-            end;
 
-            local State = KeyPicker:GetState();
-
-            ContainerLabel.Text = string.format('[%s] %s (%s)', KeyPicker.Value, Info.Text, KeyPicker.Mode);
-
-            ContainerLabel.Visible = true;
-            ContainerLabel.TextColor3 = State and Library.AccentColor or Library.FontColor;
-
-            Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
-
-            local YSize = 0
-            local XSize = 0
-
-            for _, Label in next, Library.KeybindContainer:GetChildren() do
-                if Label:IsA('TextLabel') and Label.Visible then
-                    YSize = YSize + 18;
-                    if (Label.TextBounds.X > XSize) then
-                        XSize = Label.TextBounds.X
-                    end
-                end;
-            end;
-
-            Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 23)
-        end;
-
-        local keyStates = {}
-        Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
-            if not GameProcessed and Input.UserInputType == Enum.UserInputType.Keyboard then
-                local key = Input.KeyCode.Name
-                keyStates[key] = true  -- Mark the key as released
-            end
-        end))
-        Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
-            if not GameProcessed and Input.UserInputType == Enum.UserInputType.Keyboard then
-                local key = Input.KeyCode.Name
-                keyStates[key] = false  -- Mark the key as released
-            end
-        end))
-
-        -- KeyPicker:GetState function to use the tracked key states
-        function KeyPicker:GetState()
-            if KeyPicker.Mode == 'Always' then
-                return true
-            elseif KeyPicker.Mode == 'Hold' then
-                if KeyPicker.Value == 'None' then
-                    return false
-                end
-
-                -- Get the key from the KeyPicker value
-                local key = KeyPicker.Value
-
-                -- Return whether the key is pressed using the tracked state
-                return keyStates[key] or false
-            else
-                return KeyPicker.Toggled
-            end
-        end
 
         function KeyPicker:SetValue(Data)
             local Key, Mode = Data[1], Data[2];
@@ -1243,7 +1249,6 @@ do
             Library:SafeCallback(KeyPicker.Clicked, KeyPicker.Toggled)
         end
 
-        local Picking = false;
 
         PickOuter.InputBegan:Connect(function(Input)
             if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
@@ -1282,10 +1287,13 @@ do
                     end;
 
                     Break = true;
-                    Picking = false;
 
                     DisplayLabel.Text = Key;
                     KeyPicker.Value = Key;
+                    KeyPicker:Update()
+
+                    wait(0.05)
+                    Picking = false;
 
                     Library:SafeCallback(KeyPicker.ChangedCallback, Input.KeyCode or Input.UserInputType)
                     Library:SafeCallback(KeyPicker.Changed, Input.KeyCode or Input.UserInputType)
@@ -1318,7 +1326,6 @@ do
                     end;
                 end;
 
-                KeyPicker:Update();
             end;
 
             if Input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1332,11 +1339,7 @@ do
             end;
         end))
 
-        Library:GiveSignal(InputService.InputEnded:Connect(function(Input)
-            if (not Picking) then
-                KeyPicker:Update();
-            end;
-        end))
+
 
         KeyPicker:Update();
 

@@ -1015,7 +1015,6 @@ do
             Callback = Info.Callback or function(Value) end;
             ChangedCallback = Info.ChangedCallback or function(New) end;
             SyncToggleState = Info.SyncToggleState or false;
-            ParentBlock = Info.ParentBlock or false;
         };
 
         if KeyPicker.SyncToggleState then
@@ -1106,20 +1105,25 @@ do
 
         local Picking = false;
         local KeyStates = {}
+
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
-            if Input.UserInputType == Enum.UserInputType.Keyboard and not GameProcessed then
-                local key = Input.KeyCode.Name
+            if (Input.UserInputType == Enum.UserInputType.Keyboard or Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.MouseButton2) and not GameProcessed then
+                local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
+                if key == 'MouseButton1' then key = 'MB1' elseif key == 'MouseButton2' then key = 'MB2' end
                 KeyStates[key] = true
                 KeyPicker:Update()
             end
         end))
+        
         Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
-            if Input.UserInputType == Enum.UserInputType.Keyboard then
-                local key = Input.KeyCode.Name
+            if Input.UserInputType == Enum.UserInputType.Keyboard or Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.MouseButton2 then
+                local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
+                if key == 'MouseButton1' then key = 'MB1' elseif key == 'MouseButton2' then key = 'MB2' end
                 KeyStates[key] = false
                 KeyPicker:Update()
             end
         end))
+        
         function KeyPicker:GetState()
             if not ParentObj.Value then
                 return false

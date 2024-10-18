@@ -1244,7 +1244,9 @@ do
             if ParentObj.Type == 'Toggle' and KeyPicker.SyncToggleState then
                 ParentObj:SetValue(not ParentObj.Value)
             end
-
+            if not ParentObj.Value then
+                return
+            end
             Library:SafeCallback(KeyPicker.Callback, KeyPicker.Toggled)
             Library:SafeCallback(KeyPicker.Clicked, KeyPicker.Toggled)
         end
@@ -1308,7 +1310,7 @@ do
         end);
 
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
-            if (not Picking) then
+            if (not Picking) and ParentObj.Value then
                 if KeyPicker.Mode == 'Toggle' then
                     local Key = KeyPicker.Value;
 

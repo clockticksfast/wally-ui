@@ -1126,6 +1126,8 @@ do
         
         function KeyPicker:GetState()
             if not ParentObj.Value then
+                KeyStates[KeyPicker.Value] = false
+                KeyPicker.Toggled = false
                 return false
             end
             if Picking then

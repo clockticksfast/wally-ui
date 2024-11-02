@@ -1122,18 +1122,16 @@ do
         end))
         
         Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
-            if Input.UserInputType == Enum.UserInputType.Keyboard or Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.MouseButton2 then
-                local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
-                if key == 'MouseButton1' then 
-                    key = 'MB1' 
-                elseif key == 'MouseButton2' then 
-                    key = 'MB2' 
-                elseif key == 'MouseButton3' then
-                    key = 'MB3'
-                end                
-                KeyStates[key] = false
-                KeyPicker:Update()
-            end
+            local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
+            if key == 'MouseButton1' then 
+                key = 'MB1' 
+            elseif key == 'MouseButton2' then 
+                key = 'MB2' 
+            elseif key == 'MouseButton3' then
+                key = 'MB3'
+            end                
+            KeyStates[key] = false
+            KeyPicker:Update()
         end))
         
         function KeyPicker:GetState()

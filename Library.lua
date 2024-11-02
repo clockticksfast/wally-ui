@@ -1107,9 +1107,15 @@ do
         local KeyStates = {}
 
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
-            if (Input.UserInputType == Enum.UserInputType.Keyboard or Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.MouseButton2) and not GameProcessed then
+            if not GameProcessed then
                 local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
-                if key == 'MouseButton1' then key = 'MB1' elseif key == 'MouseButton2' then key = 'MB2' end
+                if key == 'MouseButton1' then 
+                    key = 'MB1' 
+                elseif key == 'MouseButton2' then 
+                    key = 'MB2' 
+                elseif key == 'MouseButton3' then
+                    key = 'MB3'
+                end
                 KeyStates[key] = true
                 KeyPicker:Update()
             end
@@ -1118,7 +1124,13 @@ do
         Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
             if Input.UserInputType == Enum.UserInputType.Keyboard or Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.MouseButton2 then
                 local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
-                if key == 'MouseButton1' then key = 'MB1' elseif key == 'MouseButton2' then key = 'MB2' end
+                if key == 'MouseButton1' then 
+                    key = 'MB1' 
+                elseif key == 'MouseButton2' then 
+                    key = 'MB2' 
+                elseif key == 'MouseButton3' then
+                    key = 'MB3'
+                end                
                 KeyStates[key] = false
                 KeyPicker:Update()
             end
@@ -1292,6 +1304,8 @@ do
                         Key = 'MB1';
                     elseif Input.UserInputType == Enum.UserInputType.MouseButton2 then
                         Key = 'MB2';
+                    elseif Input.UserInputType == Enum.UserInputType.MouseButton3 then
+                        Key = 'MB3';
                     end;
 
                     Break = true;
@@ -1320,9 +1334,10 @@ do
                 if KeyPicker.Mode == 'Toggle' then
                     local Key = KeyPicker.Value;
 
-                    if Key == 'MB1' or Key == 'MB2' then
+                    if Key == 'MB1' or Key == 'MB2' or Key == 'MB3' then
                         if Key == 'MB1' and Input.UserInputType == Enum.UserInputType.MouseButton1
-                        or Key == 'MB2' and Input.UserInputType == Enum.UserInputType.MouseButton2 then
+                        or Key == 'MB2' and Input.UserInputType == Enum.UserInputType.MouseButton2
+                        or Key == 'MB3' and Input.UserInputType == Enum.UserInputType.MouseButton3 then
                             KeyPicker.Toggled = not KeyPicker.Toggled
                             KeyPicker:DoClick()
                         end;

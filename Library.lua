@@ -2509,6 +2509,8 @@ do
 
                             Library:AttemptSave();
                         end;
+                        Library:UpdateDependencyBoxes()
+
                     end;
                 end);
 
@@ -2546,7 +2548,6 @@ do
 
         function Dropdown:OnChanged(Func)
             Dropdown.Changed = Func;
-            Library:UpdateDependencyBoxes()
             Func(Dropdown.Value);
         end;
 

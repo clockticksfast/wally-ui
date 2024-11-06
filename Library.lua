@@ -150,6 +150,8 @@ function Library:CreateLabel(Properties, IsHud)
         TextColor3 = Library.FontColor;
         TextSize = 16;
         TextStrokeTransparency = 0;
+        TextXAlignment = Enum.TextXAlignment.Center;
+
     });
 
     Library:ApplyTextStroke(_Instance);
@@ -1392,24 +1394,26 @@ do
         });
     end;
 
-    function Funcs:AddLabel(Text, DoesWrap)
+    function Funcs:AddLabel(Info)
         local Label = {};
 
         local Groupbox = self;
         local Container = Groupbox.Container;
 
         local TextLabel = Library:CreateLabel({
-            Size = UDim2.new(1, -4, 0, 15);
+            Size = Info.Center and UDim2.new(1, 0, 0, 15) or            UDim2.new(1, -4, 0, 15);
+
             TextSize = 14;
-            Text = Text;
-            TextWrapped = DoesWrap or false,
-            TextXAlignment = Enum.TextXAlignment.Left;
+            Text = Info.Text or 'Placeholder Text Label';
+            TextWrapped = Info.DoesWrap or false,
+            TextXAlignment = Info.Center and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left;
+
             ZIndex = 5;
             Parent = Container;
         });
 
-        if DoesWrap then
-            local Y = select(2, Library:GetTextBounds(Text, Library.Font, 14, Vector2.new(TextLabel.AbsoluteSize.X, math.huge)))
+        if Info.DoesWrap then
+            local Y = select(2, Library:GetTextBounds(Info.Text, Library.Font, 14, Vector2.new(TextLabel.AbsoluteSize.X, math.huge)))
             TextLabel.Size = UDim2.new(1, -4, 0, Y)
         else
             Library:Create('UIListLayout', {
@@ -1427,7 +1431,7 @@ do
         function Label:SetText(Text)
             TextLabel.Text = Text
 
-            if DoesWrap then
+            if Info.DoesWrap then
                 local Y = select(2, Library:GetTextBounds(Text, Library.Font, 14, Vector2.new(TextLabel.AbsoluteSize.X, math.huge)))
                 TextLabel.Size = UDim2.new(1, -4, 0, Y)
             end
@@ -1435,7 +1439,7 @@ do
             Groupbox:Resize();
         end
 
-        if (not DoesWrap) then
+        if (not Info.DoesWrap) then
             setmetatable(Label, BaseAddons);
         end
 
@@ -3402,7 +3406,6 @@ function Library:CreateWindow(...)
                     Size = UDim2.new(1, 0, 1, 0);
                     TextSize = 14;
                     Text = Name;
-                    TextXAlignment = Enum.TextXAlignment.Center;
                     ZIndex = 7;
                     Parent = Button;
                 });

@@ -2549,6 +2549,8 @@ do
         function Dropdown:OnChanged(Func)
             Dropdown.Changed = Func;
             Func(Dropdown.Value);
+            Library:UpdateDependencyBoxes()
+
         end;
 
         function Dropdown:SetValue(Val)

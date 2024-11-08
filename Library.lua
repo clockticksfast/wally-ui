@@ -1,13 +1,20 @@
-local InputService = game:GetService('UserInputService');
-local TextService = game:GetService('TextService');
-local CoreGui = game:GetService('CoreGui');
-local Teams = game:GetService('Teams');
-local Players = game:GetService('Players');
-local RunService = game:GetService('RunService')
-local TweenService = game:GetService('TweenService');
-local RenderStepped = RunService.RenderStepped;
-local LocalPlayer = Players.LocalPlayer;
-local Mouse = LocalPlayer:GetMouse();
+local Service = setmetatable({}, { 
+    __index = function(self, Service)
+        return game.GetService(game, Service)
+    end
+})
+
+local InputService = Service.UserInputService
+local TextService = Service.TextService
+local CoreGui = Service.CoreGui
+local Teams = Service.Teams
+local Players = Service.Players
+local RunService = Service.RunService
+local TweenService = Service.TweenService
+local RenderStepped = RunService.RenderStepped
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer.GetMouse(LocalPlayer)
+
 
 local ProtectGui = protectgui or (syn and syn.protect_gui) or (function() end);
 
@@ -65,30 +72,6 @@ table.insert(Library.Signals, RenderStepped:Connect(function(Delta)
         Library.CurrentRainbowColor = Color3.fromHSV(Hue, 0.8, 1);
     end
 end))
-
-local function GetPlayersString()
-    local PlayerList = Players:GetPlayers();
-
-    for i = 1, #PlayerList do
-        PlayerList[i] = PlayerList[i].Name;
-    end;
-
-    table.sort(PlayerList, function(str1, str2) return str1 < str2 end);
-
-    return PlayerList;
-end;
-
-local function GetTeamsString()
-    local TeamList = Teams:GetTeams();
-
-    for i = 1, #TeamList do
-        TeamList[i] = TeamList[i].Name;
-    end;
-
-    table.sort(TeamList, function(str1, str2) return str1 < str2 end);
-    
-    return TeamList;
-end;
 
 function Library:SafeCallback(f, ...)
     if (not f) then
@@ -308,7 +291,7 @@ function Library:MapValue(Value, MinA, MaxA, MinB, MaxB)
 end;
 
 function Library:GetTextBounds(Text, Font, Size, Resolution)
-    local Bounds = TextService:GetTextSize(Text, Size, Font, Resolution or Vector2.new(1920, 1080))
+    local Bounds = TextService.GetTextSize(TextService, Text, Size, Font, Resolution or Vector2.new(1920, 1080))
     return Bounds.X, Bounds.Y
 end;
 
@@ -393,7 +376,7 @@ function Library:Unload()
         Library.OnUnload()
     end
 
-    ScreenGui:Destroy()
+    ScreenGui.Destroy(ScreenGui)
 end
 
 function Library:OnUnload(Callback)
@@ -470,7 +453,7 @@ do
             Parent = ScreenGui,
         });
 
-        DisplayFrame:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
+        DisplayFrame.GetPropertyChangedSignal(DisplayFrame, 'AbsolutePosition'):Connect(function()
             PickerFrameOuter.Position = UDim2.fromOffset(DisplayFrame.AbsolutePosition.X, DisplayFrame.AbsolutePosition.Y + 18);
         end)
 
@@ -710,8 +693,8 @@ do
 
             local function updateMenuSize()
                 local menuWidth = 60
-                for i, label in next, ContextMenu.Inner:GetChildren() do
-                    if label:IsA('TextLabel') then
+                for i, label : TextLabel in next, ContextMenu.Inner.GetChildren(ContextMenu.Inner) do
+                    if label.IsA(label ,'TextLabel') then
                         menuWidth = math.max(menuWidth, label.TextBounds.X)
                     end
                 end
@@ -722,8 +705,8 @@ do
                 )
             end
 
-            DisplayFrame:GetPropertyChangedSignal('AbsolutePosition'):Connect(updateMenuPosition)
-            ContextMenu.Inner.Layout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(updateMenuSize)
+            DisplayFrame.GetPropertyChangedSignal(DisplayFrame, 'AbsolutePosition'):Connect(updateMenuPosition)
+            ContextMenu.Inner.Layout.GetPropertyChangedSignal(ContextMenu.Inner.Layout, 'AbsoluteContentSize'):Connect(updateMenuSize)
 
             task.spawn(updateMenuPosition)
             task.spawn(updateMenuSize)
@@ -1072,7 +1055,7 @@ do
         });
     
 
-        ToggleLabel:GetPropertyChangedSignal('AbsolutePosition'):Connect(function()
+        ToggleLabel.GetPropertyChangedSignal(ToggleLabel, 'AbsolutePosition'):Connect(function()
             ModeSelectOuter.Position = UDim2.fromOffset(ToggleLabel.AbsolutePosition.X + ToggleLabel.AbsoluteSize.X + 4, ToggleLabel.AbsolutePosition.Y + 1);
         end);
 
@@ -1174,8 +1157,8 @@ do
             local YSize = 0
             local XSize = 0
 
-            for _, Label in next, Library.KeybindContainer:GetChildren() do
-                if Label:IsA('TextLabel') and Label.Visible then
+            for _, Label in next, Library.KeybindContainer.GetChildren() do
+                if Label.IsA(Label, 'TextLabel') and Label.Visible then
                     YSize = YSize + 18;
                     if (Label.TextBounds.X > XSize) then
                         XSize = Label.TextBounds.X
@@ -1797,7 +1780,7 @@ do
                 Library:AttemptSave();
             end)
         else
-            Box:GetPropertyChangedSignal('Text'):Connect(function()
+            Box.GetPropertyChangedSignal(Box,'Text'):Connect(function()
                 Textbox:SetValue(Box.Text);
                 Library:AttemptSave();
             end);
@@ -1810,7 +1793,7 @@ do
             local PADDING = 2
             local reveal = Container.AbsoluteSize.X
 
-            if not Box:IsFocused() or Box.TextBounds.X <= reveal - 2 * PADDING then
+            if not Box.IsFocused(Box) or Box.TextBounds.X <= reveal - 2 * PADDING then
                 -- we aren't focused, or we fit so be normal
                 Box.Position = UDim2.new(0, PADDING, 0, 0)
             else
@@ -1819,7 +1802,7 @@ do
                 if cursor ~= -1 then
                     -- calculate pixel width of text from start to cursor
                     local subtext = string.sub(Box.Text, 1, cursor-1)
-                    local width = TextService:GetTextSize(subtext, Box.TextSize, Box.Font, Vector2.new(math.huge, math.huge)).X
+                    local width = TextService.GetTextSize(TextService, subtext, Box.TextSize, Box.Font, Vector2.new(math.huge, math.huge)).X
 
                     -- check if we're inside the box with the cursor
                     local currentCursorPos = Box.Position.X.Offset + width
@@ -1836,8 +1819,8 @@ do
 
         task.spawn(Update)
 
-        Box:GetPropertyChangedSignal('Text'):Connect(Update)
-        Box:GetPropertyChangedSignal('CursorPosition'):Connect(Update)
+        Box.GetPropertyChangedSignal(Box, 'Text'):Connect(Update)
+        Box.GetPropertyChangedSignal(Box, 'CursorPosition'):Connect(Update)
         Box.FocusLost:Connect(Update)
         Box.Focused:Connect(Update)
 
@@ -2193,13 +2176,6 @@ do
     end;
 
     function Funcs:AddDropdown(Idx, Info)
-        if Info.SpecialType == 'Player' then
-            Info.Values = GetPlayersString();
-            Info.AllowNull = true;
-        elseif Info.SpecialType == 'Team' then
-            Info.Values = GetTeamsString();
-            Info.AllowNull = true;
-        end;
 
         assert(Info.Values, 'AddDropdown: Missing dropdown value list.');
         assert(Info.AllowNull or Info.Default, 'AddDropdown: Missing default value. Pass `AllowNull` as true if this was intentional.')
@@ -2236,8 +2212,8 @@ do
             Groupbox:AddBlank(3);
         end
 
-        for _, Element in next, Container:GetChildren() do
-            if not Element:IsA('UIListLayout') then
+        for _, Element in next, Container.GetChildren(Container) do
+            if not Element.IsA(Element, 'UIListLayout') then
                 RelativeOffset = RelativeOffset + Element.Size.Y.Offset;
             end;
         end;
@@ -2328,7 +2304,7 @@ do
         RecalculateListPosition();
         RecalculateListSize();
 
-        DropdownOuter:GetPropertyChangedSignal('AbsolutePosition'):Connect(RecalculateListPosition);
+        DropdownOuter.GetPropertyChangedSignal(DropdownOuter, 'AbsolutePosition'):Connect(RecalculateListPosition);
 
         local ListInner = Library:Create('Frame', {
             BackgroundColor3 = Library.MainColor;
@@ -2408,9 +2384,9 @@ do
             local Values = Dropdown.Values;
             local Buttons = {};
 
-            for _, Element in next, Scrolling:GetChildren() do
-                if not Element:IsA('UIListLayout') then
-                    Element:Destroy();
+            for _, Element in next, Scrolling.GetChildren(Scrolling) do
+                if not Element.IsA(Element, 'UIListLayout') then
+                    Element.Destroy(Element);
                 end;
             end;
 
@@ -2676,11 +2652,11 @@ do
             Groupbox:Resize();
         end;
 
-        Layout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+        Layout.GetPropertyChangedSignal(Layout, 'AbsoluteContentSize'):Connect(function()
             Depbox:Resize();
         end);
 
-        Holder:GetPropertyChangedSignal('Visible'):Connect(function()
+        Holder.GetPropertyChangedSignal(Holder, 'Visible'):Connect(function()
             Depbox:Resize();
         end);
 
@@ -2975,7 +2951,7 @@ function Library:Notify(Text, Time)
 
         wait(0.4);
 
-        NotifyOuter:Destroy();
+        NotifyOuter.Destroy(NotifyOuter);
     end);
 end;
 
@@ -3202,7 +3178,7 @@ function Library:CreateWindow(...)
         });
 
         for _, Side in next, { LeftSide, RightSide } do
-            Side:WaitForChild('UIListLayout'):GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
+            Side.WaitForChild(Side, 'UIListLayout').GetPropertyChangedSignal(Side.UIListLayout, 'AbsoluteContentSize'):Connect(function()
                 Side.CanvasSize = UDim2.fromOffset(0, Side.UIListLayout.AbsoluteContentSize.Y);
             end);
         end;
@@ -3300,8 +3276,8 @@ function Library:CreateWindow(...)
             function Groupbox:Resize()
                 local Size = 0;
 
-                for _, Element in next, Groupbox.Container:GetChildren() do
-                    if (not Element:IsA('UIListLayout')) and Element.Visible then
+                for _, Element in next, Groupbox.Container.GetChildren(Groupbox.Container) do
+                    if (not Element.IsA(Element, 'UIListLayout')) and Element.Visible then
                         Size = Size + Element.Size.Y.Offset;
                     end;
                 end;
@@ -3469,8 +3445,8 @@ function Library:CreateWindow(...)
                         TabCount = TabCount + 1;
                     end;
 
-                    for _, Button in next, TabboxButtons:GetChildren() do
-                        if not Button:IsA('UIListLayout') then
+                    for _, Button in next, TabboxButtons.GetChildren(TabboxButtons) do
+                        if not Button.IsA(Button, 'UIListLayout') then
                             Button.Size = UDim2.new(1 / TabCount, 0, 1, 0);
                         end;
                     end;
@@ -3481,8 +3457,8 @@ function Library:CreateWindow(...)
 
                     local Size = 0;
 
-                    for _, Element in next, Tab.Container:GetChildren() do
-                        if (not Element:IsA('UIListLayout')) and Element.Visible then
+                    for _, Element in next, Tab.Container.GetChildren(Tab.Container) do
+                        if (not Element.IsA(Element, 'UIListLayout')) and Element.Visible then
                             Size = Size + Element.Size.Y.Offset;
                         end;
                     end;
@@ -3506,7 +3482,7 @@ function Library:CreateWindow(...)
                 Tab:Resize();
 
                 -- Show first tab (number is 2 cus of the UIListLayout that also sits in that instance)
-                if #TabboxButtons:GetChildren() == 2 then
+                if #TabboxButtons.GetChildren(TabboxButtons) == 2 then
                     Tab:Show();
                 end;
 
@@ -3533,7 +3509,7 @@ function Library:CreateWindow(...)
         end);
 
         -- This was the first tab added, so we show it by default.
-        if #TabContainer:GetChildren() == 1 then
+        if #TabContainer.GetChildren(TabContainer) == 1 then
             Tab:ShowTab();
         end;
 
@@ -3566,17 +3542,17 @@ function Library:CreateWindow(...)
 
 
 
-        for _, Desc in next, Outer:GetDescendants() do
+        for _, Desc in next, Outer.GetDescendants(Outer) do
             local Properties = {};
 
-            if Desc:IsA('ImageLabel') then
+            if Desc.IsA(Desc, 'ImageLabel') then
                 table.insert(Properties, 'ImageTransparency');
                 table.insert(Properties, 'BackgroundTransparency');
-            elseif Desc:IsA('TextLabel') or Desc:IsA('TextBox') then
+            elseif Desc.IsA(Desc, 'TextLabel') or Desc.IsA(Desc, 'TextBox') then
                 table.insert(Properties, 'TextTransparency');
-            elseif Desc:IsA('Frame') or Desc:IsA('ScrollingFrame') then
+            elseif Desc.IsA(Desc, 'Frame') or Desc.IsA(Desc, 'ScrollingFrame') then
                 table.insert(Properties, 'BackgroundTransparency');
-            elseif Desc:IsA('UIStroke') then
+            elseif Desc.IsA(Desc, 'UIStroke') then
                 table.insert(Properties, 'Transparency');
             end;
 
@@ -3595,8 +3571,8 @@ function Library:CreateWindow(...)
                 if Cache[Prop] == 1 then
                     continue;
                 end;
-
-                TweenService:Create(Desc, TweenInfo.new(FadeTime, Enum.EasingStyle.Linear), { [Prop] = Toggled and Cache[Prop] or 1 }):Play();
+                local t = TweenService.Create(TweenService, Desc, TweenInfo.new(FadeTime, Enum.EasingStyle.Linear), { [Prop] = Toggled and Cache[Prop] or 1 })
+                t.Play(t)
             end;
         end;
 
@@ -3627,18 +3603,6 @@ function Library:CreateWindow(...)
     return Window;
 end;
 
-local function OnPlayerChange()
-    local PlayerList = GetPlayersString();
-
-    for _, Value in next, Options do
-        if Value.Type == 'Dropdown' and Value.SpecialType == 'Player' then
-            Value:SetValues(PlayerList);
-        end;
-    end;
-end;
-
-Players.PlayerAdded:Connect(OnPlayerChange);
-Players.PlayerRemoving:Connect(OnPlayerChange);
 
 getgenv().Library = Library
 return Library

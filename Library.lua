@@ -1394,26 +1394,24 @@ do
         });
     end;
 
-    function Funcs:AddLabel(Info)
+    function Funcs:AddLabel(Text, DoesWrap, Centered)
         local Label = {};
 
         local Groupbox = self;
         local Container = Groupbox.Container;
-
         local TextLabel = Library:CreateLabel({
-            Size = Info.Center and UDim2.new(1, 0, 0, 15) or            UDim2.new(1, -4, 0, 15);
+            Size = Centered and UDim2.new(1, 0, 0, 15) or UDim2.new(1, -4, 0, 15);
+            TextXAlignment = Centered and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left;
 
             TextSize = 14;
-            Text = Info.Text or 'Placeholder Text Label';
-            TextWrapped = Info.DoesWrap or false,
-            TextXAlignment = Info.Center and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left;
-
+            Text = Text or 'Placeholder Text Label';
+            TextWrapped = DoesWrap or false,
             ZIndex = 5;
             Parent = Container;
         });
 
-        if Info.DoesWrap then
-            local Y = select(2, Library:GetTextBounds(Info.Text, Library.Font, 14, Vector2.new(TextLabel.AbsoluteSize.X, math.huge)))
+        if DoesWrap then
+            local Y = select(2, Library:GetTextBounds(Text, Library.Font, 14, Vector2.new(TextLabel.AbsoluteSize.X, math.huge)))
             TextLabel.Size = UDim2.new(1, -4, 0, Y)
         else
             Library:Create('UIListLayout', {
@@ -1431,7 +1429,7 @@ do
         function Label:SetText(Text)
             TextLabel.Text = Text
 
-            if Info.DoesWrap then
+            if DoesWrap then
                 local Y = select(2, Library:GetTextBounds(Text, Library.Font, 14, Vector2.new(TextLabel.AbsoluteSize.X, math.huge)))
                 TextLabel.Size = UDim2.new(1, -4, 0, Y)
             end
@@ -1439,7 +1437,7 @@ do
             Groupbox:Resize();
         end
 
-        if (not Info.DoesWrap) then
+        if (not DoesWrap) then
             setmetatable(Label, BaseAddons);
         end
 

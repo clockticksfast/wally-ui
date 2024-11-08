@@ -884,7 +884,7 @@ do
 
         SatVibMap.InputBegan:Connect(function(Input)
             if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+                while InputService.IsMouseButtonPressed(InputService, Enum.UserInputType.MouseButton1) do
                     local MinX = SatVibMap.AbsolutePosition.X;
                     local MaxX = MinX + SatVibMap.AbsoluteSize.X;
                     local MouseX = math.clamp(Mouse.X, MinX, MaxX);
@@ -906,7 +906,7 @@ do
 
         HueSelectorInner.InputBegan:Connect(function(Input)
             if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+                while InputService.IsMouseButtonPressed(InputService, Enum.UserInputType.MouseButton1) do
                     local MinY = HueSelectorInner.AbsolutePosition.Y;
                     local MaxY = MinY + HueSelectorInner.AbsoluteSize.Y;
                     local MouseY = math.clamp(Mouse.Y, MinY, MaxY);
@@ -938,7 +938,7 @@ do
         if TransparencyBoxInner then
             TransparencyBoxInner.InputBegan:Connect(function(Input)
                 if Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                    while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+                    while InputService.IsMouseButtonPressed(InputService, Enum.UserInputType.MouseButton1) do
                         local MinX = TransparencyBoxInner.AbsolutePosition.X;
                         local MaxX = MinX + TransparencyBoxInner.AbsoluteSize.X;
                         local MouseX = math.clamp(Mouse.X, MinX, MaxX);
@@ -2144,7 +2144,7 @@ do
                 local gPos = Fill.Size.X.Offset;
                 local Diff = mPos - (Fill.AbsolutePosition.X + gPos);
 
-                while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
+                while InputService.IsMouseButtonPressed(InputService, Enum.UserInputType.MouseButton1) do
                     local nMPos = Mouse.X;
                     local nX = math.clamp(gPos + (nMPos - mPos) + Diff, 0, Slider.MaxSize);
 

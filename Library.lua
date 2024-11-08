@@ -587,13 +587,13 @@ do
 
         Library:ApplyTextStroke(HueBox);
 
-        local RgbBoxBase = Library:Create(HueBoxOuter:Clone(), {
+        local RgbBoxBase = Library:Create(HueBoxOuter.Clone(HueBoxOuter), {
             Position = UDim2.new(0.5, 2, 0, 228),
             Size = UDim2.new(0.5, -6, 0, 20),
             Parent = PickerFrameInner
         });
 
-        local RgbBox = Library:Create(RgbBoxBase.Frame:FindFirstChild('TextBox'), {
+        local RgbBox = Library:Create(RgbBoxBase.Frame.FindFirstChild(RgbBoxBase.Frame, 'TextBox'), {
             Text = '255, 255, 255',
             PlaceholderText = 'RGB color',
             TextColor3 = Library.FontColor

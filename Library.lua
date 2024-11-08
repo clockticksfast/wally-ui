@@ -1157,7 +1157,7 @@ do
             local YSize = 0
             local XSize = 0
 
-            for _, Label in next, Library.KeybindContainer.GetChildren() do
+            for _, Label in next, Library.KeybindContainer.GetChildren(Library.KeybindContainer) do
                 if Label.IsA(Label, 'TextLabel') and Label.Visible then
                     YSize = YSize + 18;
                     if (Label.TextBounds.X > XSize) then

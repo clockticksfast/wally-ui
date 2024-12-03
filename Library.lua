@@ -1165,7 +1165,7 @@ do
                 end;
             end;
 
-            Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 35)
+            Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 32)
         end;
         local ModeButtons = {};
 

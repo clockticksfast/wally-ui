@@ -1143,19 +1143,18 @@ do
             if Info.NoUI then
                 return;
             end;
-
+        
             local State = KeyPicker:GetState();
-
-
+        
             ContainerLabel.Text = string.format('[%s] %s (%s)', KeyPicker.Value, Info.Text, KeyPicker.Mode);
-
+        
             ContainerLabel.Visible = ParentObj.Value;
             ContainerLabel.TextColor3 = State and Library.AccentColor or Library.FontColor;
             Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
-
+        
             local YSize = 0
             local XSize = 0
-
+        
             for _, Label in next, Library.KeybindContainer.GetChildren(Library.KeybindContainer) do
                 if Label.IsA(Label, 'TextLabel') and Label.Visible then
                     YSize = YSize + 18;
@@ -1164,9 +1163,15 @@ do
                     end
                 end;
             end;
-
-            Library.KeybindFrame.Size = UDim2.new(0, math.max(XSize + 10, 210), 0, YSize + 32)
+        
+            local newWidth = math.max(XSize + 10, 210)
+            local newHeight = YSize + 30
+            Library.KeybindFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
+        
+            Library.KeybindFrame.AnchorPoint = Vector2.new(0, 0) -- Make it go downwards when we add stuff to it
+        
         end;
+        
         local ModeButtons = {};
 
         for Idx, Mode in next, Modes do
@@ -2825,7 +2830,7 @@ do
         Text = 'Keybinds';
         ZIndex = 104;
         Parent = KeybindInner;
-        TextSize = 15;
+        TextSize = 14;
     });
 
     local KeybindContainer = Library:Create('Frame', {

@@ -2790,7 +2790,7 @@ do
         AnchorPoint = Vector2.new(0, 0.5);
         BorderColor3 = Color3.new(0, 0, 0);
         Position = UDim2.new(0, 10, 0.5, 0);
-        Size = UDim2.new(0, 210, 0, 20);
+        Size = UDim2.new(0, 230, 0, 20);
         Visible = false;
         ZIndex = 100;
         Parent = ScreenGui;
@@ -2800,7 +2800,7 @@ do
         BackgroundColor3 = Library.MainColor;
         BorderColor3 = Library.OutlineColor;
         BorderMode = Enum.BorderMode.Inset;
-        Size = UDim2.new(1.1, 0, 1, 0);
+        Size = UDim2.new(1, 0, 1, 0);
         ZIndex = 101;
         Parent = KeybindOuter;
     });

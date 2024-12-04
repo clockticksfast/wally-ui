@@ -38,7 +38,7 @@ local Library = {
 
     FontColor = Color3.fromRGB(255, 255, 255);
     MainColor = Color3.fromRGB(28, 28, 28);
-    BackgroundColor = Color3.fromRGB(20, 20, 20);
+    BackgroundColor = Color3.fromRGB(23, 23, 23); -- Original = Color3.fromRGB(20, 20, 20)
     AccentColor = Color3.fromRGB(0, 85, 255);
     OutlineColor = Color3.fromRGB(50, 50, 50);
     RiskColor = Color3.fromRGB(255, 50, 50),
@@ -2795,7 +2795,7 @@ do
         BackgroundColor3 = Library.MainColor;
         BorderColor3 = Library.OutlineColor;
         BorderMode = Enum.BorderMode.Inset;
-        Size = UDim2.new(1, 0, 1, 0);
+        Size = UDim2.new(1.1, 0, 1, 0);
         ZIndex = 101;
         Parent = KeybindOuter;
     });
@@ -2818,19 +2818,20 @@ do
     }, true);
 
     local KeybindLabel = Library:CreateLabel({
-        Size = UDim2.new(1, 0, 0, 25);
+        Size = UDim2.new(1, 0, 0, 23);
         Position = UDim2.fromOffset(5, 2),
         TextXAlignment = Enum.TextXAlignment.Center,
 
         Text = 'Keybinds';
         ZIndex = 104;
         Parent = KeybindInner;
+        TextSize = 15;
     });
 
     local KeybindContainer = Library:Create('Frame', {
         BackgroundTransparency = 1;
         Size = UDim2.new(1, 0, 1, -35);
-        Position = UDim2.new(0, 0, 0, 27);
+        Position = UDim2.new(0, 0, 0, 25);
         ZIndex = 1;
         Parent = KeybindInner;
     });
@@ -3010,10 +3011,10 @@ function Library:CreateWindow(...)
     });
 
     local WindowLabel = Library:CreateLabel({
-        Position = UDim2.new(0, 7, 0, 0);
-        Size = UDim2.new(0, 0, 0, 25);
+        Position = UDim2.new(0, 0, 0, -3);
+        Size = UDim2.new(1, 0, 0, 30);
         Text = Config.Title or '';
-        TextXAlignment = Enum.TextXAlignment.Left;
+        TextXAlignment = Enum.TextXAlignment.Center;
         ZIndex = 1;
         Parent = Inner,
         RichText = true

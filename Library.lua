@@ -2724,8 +2724,8 @@ do
 
     local WatermarkOuter = Library:Create('Frame', {
         BorderColor3 = Color3.new(0, 0, 0);
-        Position = UDim2.new(0, 100, 0, -25);
-        Size = UDim2.new(0, 213, 0, 20);
+        Position = UDim2.new(0.5, 100, 0, -25);
+        Size = UDim2.new(0, 213, 0, 40);
         ZIndex = 200;
         Visible = false;
         Parent = ScreenGui;
@@ -2863,7 +2863,7 @@ end;
 
 function Library:SetWatermark(Text)
     local X, Y = Library:GetTextBounds(Text, Library.Font, 14);
-    Library.Watermark.Size = UDim2.new(0, X + 15, 0, (Y * 1.5) + 3);
+    Library.Watermark.Size = UDim2.new(0, X + 15, 0, (Y * 1.5) + 6);
     Library.WatermarkText.Text = Text;
 end;
 

@@ -2461,7 +2461,7 @@ do
                                 Selected = Try;
 
                                 if Selected then
-                                    Dropdown.Value[Value] = true;
+                                    Dropdown.Value[Value] = tostring(Value);
                                 else
                                     Dropdown.Value[Value] = nil;
                                 end;
@@ -2602,18 +2602,23 @@ do
         if next(Defaults) then
             for i = 1, #Defaults do
                 local Index = Defaults[i]
+                local SelectedValue = Dropdown.Values[Index]
+                
                 if Info.Multi then
-                    Dropdown.Value[Dropdown.Values[Index]] = true
+                    -- Add the value as a string to Dropdown.Value if it doesn't already exist
+                    Dropdown.Value[SelectedValue] = tostring(SelectedValue)
                 else
-                    Dropdown.Value = Dropdown.Values[Index];
+                    -- Set Dropdown.Value to the selected value as a string
+                    Dropdown.Value = tostring(SelectedValue)
                 end
-
-                if (not Info.Multi) then break end
+        
+                if not Info.Multi then break end
             end
-
-            Dropdown:BuildDropdownList();
-            Dropdown:Display();
+        
+            Dropdown:BuildDropdownList()
+            Dropdown:Display()
         end
+        
 
         Groupbox:AddBlank(Info.BlankSize or 5);
         Groupbox:Resize();

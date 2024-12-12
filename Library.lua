@@ -1675,7 +1675,7 @@ do
         local Container = Groupbox.Container;
 
         local InputLabel = Library:CreateLabel({
-            Size = UDim2.new(1, 0, 0, 10);
+            Size = UDim2.new(1, 0, 0, 7);
             TextSize = 14;
             Text = Info.Text;
             TextXAlignment = Enum.TextXAlignment.Left;

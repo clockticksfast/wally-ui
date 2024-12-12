@@ -1684,7 +1684,7 @@ do
             Parent = Container;
         });
 
-        Groupbox:AddBlank(4);
+        Groupbox:AddBlank(5);
 
         local TextBoxOuter = Library:Create('Frame', {
             BackgroundColor3 = Color3.new(0, 0, 0);

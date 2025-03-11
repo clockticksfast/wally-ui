@@ -2791,7 +2791,7 @@ do
         AnchorPoint = Vector2.new(0, 0.5);
         BorderColor3 = Color3.new(0, 0, 0);
         Position = UDim2.new(0, 10, 0.5, 0);
-        Size = UDim2.new(0, 230, 0, 32);
+        Size = UDim2.new(0, 230, 0, 28);
         Visible = false;
         ZIndex = 100;
         Parent = ScreenGui;

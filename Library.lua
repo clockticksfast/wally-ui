@@ -1113,7 +1113,7 @@ do
         
         Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
             if Input.UserInputType == Enum.UserInputType.Keyboard then
-                KeyStates[Input.KeyCode.Name] = true
+                KeyStates[Input.KeyCode.Name] = false
             else
                 local Key = Input.UserInputType.Name
                 if Key == 'MouseButton1' then
@@ -1123,7 +1123,7 @@ do
                 elseif Key == 'MouseButton3' then
                     Key = 'MB3'
                 end
-                KeyStates[Key] = true
+                KeyStates[Key] = false
             end
             KeyPicker:Update()
         end))

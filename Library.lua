@@ -1092,30 +1092,39 @@ do
         local KeyStates = {}
 
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
-            if not GameProcessed then
-                local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
-                if key == 'MouseButton1' then 
-                    key = 'MB1' 
-                elseif key == 'MouseButton2' then 
-                    key = 'MB2' 
-                elseif key == 'MouseButton3' then
-                    key = 'MB3'
+            if Input.UserInputType == Enum.UserInputType.Keyboard then
+                if GameProcessed then
+                    return
                 end
-                KeyStates[key] = true
-                KeyPicker:Update()
+                KeyStates[Input.KeyCode.Name] = true
+            else
+                local Key = Input.UserInputType.Name
+                if Key == 'MouseButton1' then
+                    Key = 'MB1'
+                elseif Key == 'MouseButton2' then 
+                    Key = 'MB2' 
+                elseif Key == 'MouseButton3' then
+                    Key = 'MB3'
+                end
+                KeyStates[Key] = true
             end
+            KeyPicker:Update()
         end))
         
         Library:GiveSignal(InputService.InputEnded:Connect(function(Input, GameProcessed)
-            local key = Input.UserInputType == Enum.UserInputType.Keyboard and Input.KeyCode.Name or Input.UserInputType.Name
-            if key == 'MouseButton1' then 
-                key = 'MB1' 
-            elseif key == 'MouseButton2' then 
-                key = 'MB2' 
-            elseif key == 'MouseButton3' then
-                key = 'MB3'
-            end                
-            KeyStates[key] = false
+            if Input.UserInputType == Enum.UserInputType.Keyboard then
+                KeyStates[Input.KeyCode.Name] = true
+            else
+                local Key = Input.UserInputType.Name
+                if Key == 'MouseButton1' then
+                    Key = 'MB1'
+                elseif Key == 'MouseButton2' then 
+                    Key = 'MB2' 
+                elseif Key == 'MouseButton3' then
+                    Key = 'MB3'
+                end
+                KeyStates[Key] = true
+            end
             KeyPicker:Update()
         end))
         

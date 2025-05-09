@@ -1090,8 +1090,28 @@ do
 
         local Picking = false;
         local KeyStates = {}
+        local IsOverKeypicker = false
+
+        Library:GiveSignal(PickInner.MouseEnter:Connect(function()
+            IsOverKeypicker = true
+        end))
+        Library:GiveSignal(ModeSelectOuter.MouseEnter:Connect(function()
+            IsOverKeypicker = true
+        end))
+
+
+        Library:GiveSignal(ModeSelectOuter.MouseLeave:Connect(function()
+            IsOverKeypicker = false
+        end))
+        Library:GiveSignal(PickInner.MouseLeave:Connect(function()
+            IsOverKeypicker = false
+        end))
+        
 
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
+            if Picking then
+                return
+            end
             if Input.UserInputType == Enum.UserInputType.Keyboard then
                 if GameProcessed then
                     return
@@ -1106,7 +1126,10 @@ do
                 elseif Key == 'MouseButton3' then
                     Key = 'MB3'
                 end
-                KeyStates[Key] = true
+                if not IsOverKeypicker then
+                    KeyStates[Key] = true
+
+                end
             end
             KeyPicker:Update()
         end))

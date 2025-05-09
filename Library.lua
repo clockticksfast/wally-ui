@@ -1349,7 +1349,7 @@ do
         end);
 
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
-            if (not Picking) and ParentObj.Value then
+            if not Picking and not IsOverKeypicker and ParentObj.Value then
                 if KeyPicker.Mode == 'Toggle' then
                     local Key = KeyPicker.Value;
 

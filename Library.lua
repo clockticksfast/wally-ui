@@ -3514,13 +3514,14 @@ function Library:CreateWindow(...)
 
                 setmetatable(Tab, BaseGroupbox);
 
-                Tab:AddBlank(3);
+                Tab:AddBlank(4);
                 Tab:Resize();
 
                 -- Show first tab (number is 2 cus of the UIListLayout that also sits in that instance)
                 if #TabboxButtons.GetChildren(TabboxButtons) == 2 then
                     Tab:Show();
                 end;
+
 
                 return Tab;
             end;

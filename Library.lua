@@ -16,6 +16,9 @@ local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer.GetMouse(LocalPlayer)
 
 
+local tspawn = task.spawn
+
+
 local ProtectGui = protectgui or (syn and syn.protect_gui) or (function() end);
 
 local ScreenGui = Instance.new('ScreenGui');
@@ -847,8 +850,10 @@ do
         end;
 
         function ColorPicker:OnChanged(Func)
-            ColorPicker.Changed = Func;
-            Func(ColorPicker.Value)
+            tspawn(function()
+                ColorPicker.Changed = Func;
+                Func(ColorPicker.Value)
+            end)
         end;
 
         function ColorPicker:Show()
@@ -1269,8 +1274,10 @@ do
         end
 
         function KeyPicker:OnChanged(Callback)
-            KeyPicker.Changed = Callback
-            Callback(KeyPicker.Value)
+            tspawn(function()
+                KeyPicker.Changed = Callback
+                Callback(KeyPicker.Value)
+            end)
         end
 
         if ParentObj.Addons then
@@ -1866,8 +1873,10 @@ do
         });
 
         function Textbox:OnChanged(Func)
-            Textbox.Changed = Func;
-            Func(Textbox.Value);
+            tspawn(function()
+                Textbox.Changed = Func;
+                Func(Textbox.Value);
+            end)
         end;
 
         Groupbox:AddBlank(5);
@@ -1966,8 +1975,11 @@ do
         end;
 
         function Toggle:OnChanged(Func)
-            Toggle.Changed = Func;
-            Func(Toggle.Value);
+            tspawn(function()
+                Toggle.Changed = Func;
+                Func(Toggle.Value);
+            end)
+
         end;
 
         function Toggle:SetValue(Bool)
@@ -2142,8 +2154,11 @@ do
         end;
 
         function Slider:OnChanged(Func)
-            Slider.Changed = Func;
-            Func(Slider.Value);
+            tspawn(function()
+                Slider.Changed = Func;
+                Func(Slider.Value);
+            end)
+
         end;
 
         local function Round(Value)
@@ -2558,9 +2573,12 @@ do
         end;
 
         function Dropdown:OnChanged(Func)
-            Dropdown.Changed = Func;
-            Func(Dropdown.Value);
-            Library:UpdateDependencyBoxes()
+            tspawn(function()
+                Dropdown.Changed = Func;
+                Func(Dropdown.Value);
+                Library:UpdateDependencyBoxes()
+            end)
+                
 
         end;
 

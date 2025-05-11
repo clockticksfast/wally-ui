@@ -367,6 +367,7 @@ function Library:GiveSignal(Signal)
     table.insert(Library.Signals, Signal)
 end
 
+local UnloadCallbacks = {}
 function Library:Unload()
     -- Unload all of the signals
     for Idx = #Library.Signals, 1, -1 do
@@ -375,15 +376,18 @@ function Library:Unload()
     end
 
      -- Call our unload callback, maybe to undo some hooks etc
-    if Library.OnUnload then
-        Library.OnUnload()
+    if #UnloadCallbacks ~= 0 then
+        for _, func in next, UnloadCallbacks do
+            func()
+        end
+        --Library.OnUnload()
     end
 
     ScreenGui.Destroy(ScreenGui)
 end
 
 function Library:OnUnload(Callback)
-    Library.OnUnload = Callback
+    table.insert(UnloadCallbacks, Callback)
 end
 
 Library:GiveSignal(ScreenGui.DescendantRemoving:Connect(function(Instance)

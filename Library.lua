@@ -1430,7 +1430,7 @@ do
         local Groupbox = self;
         local Container = Groupbox.Container;
         local TextLabel = Library:CreateLabel({
-            Size = Centered and UDim2.new(1, 0, 0, 15) or UDim2.new(1, -4, 0, 15);
+            Size = UDim2.new(1, -4, 0, 15);
             TextXAlignment = Centered and Enum.TextXAlignment.Center or Enum.TextXAlignment.Left;
 
             TextSize = 14;

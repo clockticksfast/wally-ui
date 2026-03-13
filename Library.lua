@@ -1183,6 +1183,14 @@ do
                 return KeyPicker.Toggled
             end
         end
+        local function BrightenColor(Color, Factor)
+            return Color3.new(
+                math.clamp(Color.R * Factor, 0, 1),
+                math.clamp(Color.G * Factor, 0, 1),
+                math.clamp(Color.B * Factor, 0, 1)
+            )
+        end
+
         function KeyPicker:Update()
             if Info.NoUI then
                 return;
@@ -1193,7 +1201,8 @@ do
             ContainerLabel.Text = string.format('[%s] %s (%s)', KeyPicker.Value, Info.Text, KeyPicker.Mode);
         
             ContainerLabel.Visible = ParentObj.Value;
-            ContainerLabel.TextColor3 = State and Library.AccentColor or Library.FontColor;
+            ContainerLabel.TextColor3 = (KeyPicker.Mode == 'Press' and BrightenColor(Library.AccentColor, 0.7)) or (State and BrightenColor(Library.AccentColor, 1.1)) or Library.FontColor;
+
             Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
         
             local YSize = 0
@@ -1363,21 +1372,30 @@ do
         end);
 
         Library:GiveSignal(InputService.InputBegan:Connect(function(Input, GameProcessed)
-            if not Picking and not IsOverKeypicker and ParentObj.Value then
-                if KeyPicker.Mode == 'Toggle' then
+            if not Picking and not IsOverKeypicker and ParentObj.Value and (KeyPicker.Mode == 'Toggle' or KeyPicker.Mode == 'Press') then
+                if KeyPicker.Mode == 'Toggle' or KeyPicker.Mode == 'Press' then
                     local Key = KeyPicker.Value;
 
                     if Key == 'MB1' or Key == 'MB2' or Key == 'MB3' then
                         if Key == 'MB1' and Input.UserInputType == Enum.UserInputType.MouseButton1
                         or Key == 'MB2' and Input.UserInputType == Enum.UserInputType.MouseButton2
                         or Key == 'MB3' and Input.UserInputType == Enum.UserInputType.MouseButton3 then
-                            KeyPicker.Toggled = not KeyPicker.Toggled
-                            KeyPicker:DoClick()
+                            if KeyPicker.Mode == 'Press' then
+                                KeyPicker:DoClick()
+                            elseif KeyPicker.Mode == 'Toggle' then
+                                KeyPicker.Toggled = not KeyPicker.Toggled;
+                                KeyPicker:DoClick()
+                            end
                         end;
                     elseif Input.UserInputType == Enum.UserInputType.Keyboard and not GameProcessed then
                         if Input.KeyCode.Name == Key then
-                            KeyPicker.Toggled = not KeyPicker.Toggled;
-                            KeyPicker:DoClick()
+                            if KeyPicker.Mode == 'Press' then
+                                KeyPicker:DoClick()
+                            elseif KeyPicker.Mode == 'Toggle' then
+                                KeyPicker.Toggled = not KeyPicker.Toggled;
+                                KeyPicker:DoClick()
+                            end
+    
                         end;
                     end;
                 end;

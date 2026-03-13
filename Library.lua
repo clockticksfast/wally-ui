@@ -1208,7 +1208,7 @@ do
                 end;
             end;
         
-            local newWidth = math.max(XSize + 10, 210)
+            local newWidth = math.max(XSize + 10, KeyFrame.Size.X.Offset)
             local newHeight = YSize + 30
             KeyFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
         
@@ -2852,14 +2852,15 @@ do
         }
         if not Keylist.Text and Library.KeyContainers.KeybindContainerDefault then return end;
         local KeybindOuter = Library:Create('Frame', {
-        AnchorPoint = Vector2.new(0, 0.5);
-        BorderColor3 = Color3.new(0, 0, 0);
-        Position = UDim2.new(0, 10, 0.3, keylists * 100);
-        Size = UDim2.new(0, 230, 0, 28);
-        Visible = false;
-        ZIndex = 100;
-        Parent = ScreenGui;
-        });
+            AnchorPoint = Vector2.new(0, 0.5);
+            BorderColor3 = Color3.new(0, 0, 0);
+            Position = UDim2.new(0, 10, 0.3, keylists * 100);
+            Size = Keylist.Size;
+            Visible = false;
+            ZIndex = 100;
+            Parent = ScreenGui;
+            });
+            print(Keylist.Size)
         keylists = keylists + 1
 
         local KeybindInner = Library:Create('Frame', {

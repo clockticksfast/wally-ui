@@ -1009,6 +1009,7 @@ do
             Callback = Info.Callback or function(Value) end;
             ChangedCallback = Info.ChangedCallback or function(New) end;
             SyncToggleState = Info.SyncToggleState or false;
+            Keylist = Info.Keylist;
         };
 
         if KeyPicker.SyncToggleState then
@@ -1088,15 +1089,17 @@ do
             Parent = ModeSelectInner;
         });
 
+        local KeyList = KeyPicker.Keylist and Library.KeyContainers['KeybindContainer' .. KeyPicker.Keylist] or Library.KeyContainers.KeybindContainerDefault;
+        local KeyFrame = KeyPicker.Keylist and Library.KeyContainers['KeybindFrame' .. KeyPicker.Keylist] or Library.KeyContainers.KeybindFrameDefault;
         local ContainerLabel = Library:CreateLabel({
             TextXAlignment = Enum.TextXAlignment.Left;
             Size = UDim2.new(1, 0, 0, 18);
             TextSize = 13;
             Visible = false;
-            ZIndex = 110;
-            Parent = Library.KeybindContainer;
-        },  true);
+            ZIndex = 110; 
 
+            Parent = KeyList;
+        },  true);
         local Picking = false;
         local KeyStates = {}
         local IsOverKeypicker = false
@@ -1196,7 +1199,7 @@ do
             local YSize = 0
             local XSize = 0
         
-            for _, Label in next, Library.KeybindContainer.GetChildren(Library.KeybindContainer) do
+            for _, Label in next, KeyList.GetChildren(KeyList) do
                 if Label.IsA(Label, 'TextLabel') and Label.Visible then
                     YSize = YSize + 18;
                     if (Label.TextBounds.X > XSize) then
@@ -1207,9 +1210,9 @@ do
         
             local newWidth = math.max(XSize + 10, 210)
             local newHeight = YSize + 30
-            Library.KeybindFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
+            KeyFrame.Size = UDim2.new(0, newWidth, 0, newHeight)
         
-            Library.KeybindFrame.AnchorPoint = Vector2.new(0, 0) -- Make it go downwards when we add stuff to it
+            KeyFrame.AnchorPoint = Vector2.new(0, 0) -- Make it go downwards when we add stuff to it
         
         end;
         
@@ -2839,77 +2842,93 @@ do
     Library.WatermarkText = WatermarkLabel;
     Library:MakeDraggable(Library.Watermark);
 
-
-
-    local KeybindOuter = Library:Create('Frame', {
+    local keylists = 0;
+    Library.KeyContainers = {}
+    Library.CreateKeylist = function(Settings : table)
+        if not Settings then Settings = {} end
+        local Keylist = {
+            Text = Settings.Text,
+            Size = Settings.Size or UDim2.new(0, 230, 0, 28);
+        }
+        if not Keylist.Text and Library.KeyContainers.KeybindContainerDefault then return end;
+        local KeybindOuter = Library:Create('Frame', {
         AnchorPoint = Vector2.new(0, 0.5);
         BorderColor3 = Color3.new(0, 0, 0);
-        Position = UDim2.new(0, 10, 0.5, 0);
+        Position = UDim2.new(0, 10, 0.3, keylists * 100);
         Size = UDim2.new(0, 230, 0, 28);
         Visible = false;
         ZIndex = 100;
         Parent = ScreenGui;
-    });
+        });
+        keylists = keylists + 1
 
-    local KeybindInner = Library:Create('Frame', {
-        BackgroundColor3 = Library.MainColor;
-        BorderColor3 = Library.OutlineColor;
-        BorderMode = Enum.BorderMode.Inset;
-        Size = UDim2.new(1, 0, 1, 0);
-        ZIndex = 101;
-        Parent = KeybindOuter;
-    });
+        local KeybindInner = Library:Create('Frame', {
+            BackgroundColor3 = Library.MainColor;
+            BorderColor3 = Library.OutlineColor;
+            BorderMode = Enum.BorderMode.Inset;
+            Size = UDim2.new(1, 0, 1, 0);
+            ZIndex = 101;
+            Parent = KeybindOuter;
+        });
 
-    Library:AddToRegistry(KeybindInner, {
-        BackgroundColor3 = 'MainColor';
-        BorderColor3 = 'OutlineColor';
-    }, true);
+        Library:AddToRegistry(KeybindInner, {
+            BackgroundColor3 = 'MainColor';
+            BorderColor3 = 'OutlineColor';
+        }, true);
 
-    local ColorFrame = Library:Create('Frame', {
-        BackgroundColor3 = Library.AccentColor;
-        BorderSizePixel = 0;
-        Size = UDim2.new(1, 0, 0, 2);
-        ZIndex = 102;
-        Parent = KeybindInner;
-    });
+        local ColorFrame = Library:Create('Frame', {
+            BackgroundColor3 = Library.AccentColor;
+            BorderSizePixel = 0;
+            Size = UDim2.new(1, 0, 0, 2);
+            ZIndex = 102;
+            Parent = KeybindInner;
+        });
 
-    Library:AddToRegistry(ColorFrame, {
-        BackgroundColor3 = 'AccentColor';
-    }, true);
+        Library:AddToRegistry(ColorFrame, {
+            BackgroundColor3 = 'AccentColor';
+        }, true);
 
-    local KeybindLabel = Library:CreateLabel({
-        Size = UDim2.new(1, 0, 0, 23);
-        Position = UDim2.fromOffset(5, 2),
-        TextXAlignment = Enum.TextXAlignment.Center,
+        local KeybindLabel = Library:CreateLabel({
+            Size = UDim2.new(1, 0, 0, 23);
+            Position = UDim2.fromOffset(5, 2),
+            TextXAlignment = Enum.TextXAlignment.Center,
 
-        Text = 'Keybinds';
-        ZIndex = 104;
-        Parent = KeybindInner;
-        TextSize = 14;
-    });
+            Text = Keylist.Text or 'Keybinds';
+            ZIndex = 104;
+            Parent = KeybindInner;
+            TextSize = 14;
+        });
 
-    local KeybindContainer = Library:Create('Frame', {
-        BackgroundTransparency = 1;
-        Size = UDim2.new(1, 0, 1, -35);
-        Position = UDim2.new(0, 0, 0, 25);
-        ZIndex = 1;
-        Parent = KeybindInner;
-    });
+        local KeybindContainer = Library:Create('Frame', {
+            BackgroundTransparency = 1;
+            Size = UDim2.new(1, 0, 1, -35);
+            Position = UDim2.new(0, 0, 0, 25);
+            ZIndex = 1;
+            Parent = KeybindInner;
+        });
 
-    Library:Create('UIListLayout', {
-        FillDirection = Enum.FillDirection.Vertical;
-        SortOrder = Enum.SortOrder.LayoutOrder;
-        Parent = KeybindContainer;
-    });
+        Library:Create('UIListLayout', {
+            FillDirection = Enum.FillDirection.Vertical;
+            SortOrder = Enum.SortOrder.LayoutOrder;
+            Parent = KeybindContainer;
+        });
 
-    Library:Create('UIPadding', {
-        PaddingLeft = UDim.new(0, 10),
-        Parent = KeybindContainer,
-    })
+        Library:Create('UIPadding', {
+            PaddingLeft = UDim.new(0, 10),
+            Parent = KeybindContainer,
+        })
 
-    Library.KeybindFrame = KeybindOuter;
-    Library.KeybindContainer = KeybindContainer;
-    Library:MakeDraggable(KeybindOuter);
+        if not Library.KeyContainers.KeybindContainerDefault and not Keylist.Text then
+            Library.KeyContainers.KeybindContainerDefault = KeybindContainer;
+            Library.KeyContainers.KeybindFrameDefault = KeybindOuter;
+        else
+            Library.KeyContainers['KeybindContainer' .. Keylist.Text] = KeybindContainer;
+            Library.KeyContainers['KeybindFrame' .. Keylist.Text] = KeybindOuter;
+        end
+        Library:MakeDraggable(KeybindOuter);
+    end
+    Library.CreateKeylist();
+    
 end;
 
 function Library:SetWatermarkVisibility(Bool)

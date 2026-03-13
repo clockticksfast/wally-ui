@@ -1201,7 +1201,7 @@ do
             ContainerLabel.Text = string.format('[%s] %s (%s)', KeyPicker.Value, Info.Text, KeyPicker.Mode);
         
             ContainerLabel.Visible = ParentObj.Value;
-            ContainerLabel.TextColor3 = (KeyPicker.Mode == 'Press' and BrightenColor(Library.AccentColor, 0.7)) or (State and BrightenColor(Library.AccentColor, 1.1)) or Library.FontColor;
+            ContainerLabel.TextColor3 = (KeyPicker.Mode == 'Press' and BrightenColor(Library.AccentColor, 1.3)) or (State and BrightenColor(Library.AccentColor, 1.1)) or Library.FontColor;
 
             Library.RegistryMap[ContainerLabel].Properties.TextColor3 = State and 'AccentColor' or 'FontColor';
         
@@ -2872,14 +2872,13 @@ do
         local KeybindOuter = Library:Create('Frame', {
             AnchorPoint = Vector2.new(0, 0.5);
             BorderColor3 = Color3.new(0, 0, 0);
-            Position = UDim2.new(0, 10, 0.3, keylists * 100);
+            Position = UDim2.new(0, 10 + keylists + 10, 0.3, 0);
             Size = Keylist.Size;
             Visible = false;
             ZIndex = 100;
             Parent = ScreenGui;
             });
-            print(Keylist.Size)
-        keylists = keylists + 1
+        keylists = keylists + Keylist.Size.X.Offset + 10
 
         local KeybindInner = Library:Create('Frame', {
             BackgroundColor3 = Library.MainColor;

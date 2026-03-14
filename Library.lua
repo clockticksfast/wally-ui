@@ -1238,7 +1238,7 @@ do
                 ZIndex = 16;
                 Parent = ModeSelectInner;
             });
-
+            
             function ModeButton:Select()
                 for _, Button in next, ModeButtons do
                     Button:Deselect();
@@ -1278,7 +1278,8 @@ do
 
 
         function KeyPicker:SetValue(Data)
-            local Key, Mode = Data[1], Data[2];
+
+            local Key, Mode = Data[1], Data[2]
             DisplayLabel.Text = Key;
             KeyPicker.Value = Key;
             ModeButtons[Mode]:Select();
@@ -2866,19 +2867,19 @@ do
         if not Settings then Settings = {} end
         local Keylist = {
             Text = Settings.Text,
-            Size = Settings.Size or UDim2.new(0, 230, 0, 28);
+            Size = Settings.Size or UDim2.new(0, 240, 0, 28);
         }
         if not Keylist.Text and Library.KeyContainers.KeybindContainerDefault then return end;
         local KeybindOuter = Library:Create('Frame', {
             AnchorPoint = Vector2.new(0, 0.5);
             BorderColor3 = Color3.new(0, 0, 0);
-            Position = UDim2.new(0, 10 + keylists + 10, 0.3, 0);
+            Position = UDim2.new(0, 10, 0.3 + (0.13 * keylists), 0);
             Size = Keylist.Size;
             Visible = false;
             ZIndex = 100;
             Parent = ScreenGui;
             });
-        keylists = keylists + Keylist.Size.X.Offset + 10
+        keylists = keylists + 1
 
         local KeybindInner = Library:Create('Frame', {
             BackgroundColor3 = Library.MainColor;

@@ -22,7 +22,6 @@ local tspawn = task.spawn
 local ProtectGui = protectgui or (syn and syn.protect_gui) or (function() end);
 
 local ScreenGui = Instance.new('ScreenGui');
-ProtectGui(ScreenGui);
 
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global;
 ScreenGui.Parent = CoreGui;
@@ -234,9 +233,13 @@ function Library:AddToolTip(InfoStr, HoverInstance)
         Tooltip.Visible = false
     end)
 end
-
+function Library:GiveSignal(Signal)
+    -- Only used for signals not attached to library instances, as those should be cleaned up on object destruction by Roblox
+    table.insert(Library.Signals, Signal)
+end
 function Library:OnHighlight(HighlightInstance, Instance, Properties, PropertiesDefault)
-    HighlightInstance.MouseEnter:Connect(function()
+
+    local SetHoveredColor = function()
         local Reg = Library.RegistryMap[Instance];
 
         for Property, ColorIdx in next, Properties do
@@ -246,9 +249,8 @@ function Library:OnHighlight(HighlightInstance, Instance, Properties, Properties
                 Reg.Properties[Property] = ColorIdx;
             end;
         end;
-    end)
-
-    HighlightInstance.MouseLeave:Connect(function()
+    end
+    local SetDefaultColor = function()
         local Reg = Library.RegistryMap[Instance];
 
         for Property, ColorIdx in next, PropertiesDefault do
@@ -258,7 +260,24 @@ function Library:OnHighlight(HighlightInstance, Instance, Properties, Properties
                 Reg.Properties[Property] = ColorIdx;
             end;
         end;
-    end)
+    end
+    HighlightInstance.MouseEnter:Connect(SetHoveredColor)
+
+    HighlightInstance.MouseLeave:Connect(SetDefaultColor)
+    --[[
+    local Layout = HighlightInstance.Parent and  HighlightInstance.Parent.Parent and HighlightInstance.Parent.Parent:FindFirstChildOfClass("UIListLayout")
+
+    if Layout then
+        Library:GiveSignal(HighlightInstance:GetPropertyChangedSignal("AbsolutePosition"):Connect(function()
+            print('changeed!')
+            if Library:IsMouseOverFrame(HighlightInstance) then
+                SetHoveredColor()
+            else
+                SetDefaultColor()
+            end
+        end))
+    end
+    ]]
 end;
 
 function Library:MouseIsOverOpenedFrame()
@@ -362,10 +381,7 @@ function Library:UpdateColorsUsingRegistry()
     end;
 end;
 
-function Library:GiveSignal(Signal)
-    -- Only used for signals not attached to library instances, as those should be cleaned up on object destruction by Roblox
-    table.insert(Library.Signals, Signal)
-end
+
 
 local UnloadCallbacks = {}
 function Library:Unload()
@@ -2026,10 +2042,22 @@ do
             Library:UpdateDependencyBoxes();
         end;
 
+
+
+
         ToggleRegion.InputBegan:Connect(function(Input)
             if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
                 Toggle:SetValue(not Toggle.Value) -- Why was it not like this from the start?
                 Library:AttemptSave();
+
+
+                if (not Library:IsMouseOverFrame(ToggleRegion)) then
+                    
+                    ToggleOuter.BorderColor3 = Library["Black"]
+
+                end
+                    
+
             end;
         end);
 
@@ -2581,6 +2609,7 @@ do
         function Dropdown:SetValues(NewValues)
             if NewValues then
                 Dropdown.Values = NewValues;
+
             end;
 
             Dropdown:BuildDropdownList();

@@ -2169,7 +2169,7 @@ do
         });
 
         local DisplayLabel = Library:CreateLabel({
-            Size = UDim2.new(1, 0, 1, 0);
+            Size = UDim2.new(1, 0, 0.99, 0);
             TextSize = 14;
             Text = 'Infinite';
             ZIndex = 9;

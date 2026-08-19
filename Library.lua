@@ -2900,7 +2900,7 @@ do
         }
         if not Keylist.Text and Library.KeyContainers.KeybindContainerDefault then return end;
         local KeybindOuter = Library:Create('Frame', {
-            AnchorPoint = Vector2.new(0, 0.2);
+            AnchorPoint = Vector2.new(0, 0.7);
             BorderColor3 = Color3.new(0, 0, 0);
             Position = UDim2.new(0, 10, 0.3 + (0.13 * keylists), 0);
             Size = Keylist.Size;

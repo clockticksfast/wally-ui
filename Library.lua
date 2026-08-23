@@ -2908,6 +2908,7 @@ do
             ZIndex = 100;
             Parent = ScreenGui;
             });
+            print(0.3 + (0.13 * keylists))
         keylists = keylists + 1
 
         local KeybindInner = Library:Create('Frame', {

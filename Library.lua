@@ -2902,7 +2902,7 @@ do
         local KeybindOuter = Library:Create('Frame', {
             --AnchorPoint = Vector2.new(0, 0.3);
             BorderColor3 = Color3.new(0, 0, 0);
-            Position = UDim2.new(0, 10, 0.3 + (0.13 * keylists), 0);
+            Position = UDim2.new(0, 10,  (0.13 * keylists), 0);
             Size = Keylist.Size;
             Visible = false;
             ZIndex = 100;
